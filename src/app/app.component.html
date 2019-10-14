@@ -4,9 +4,18 @@
 <!--h4>{{fileForm.value}}</h4-->
 <h3> Edit contents </h3>
 <form [formGroup]="fileForm" (ngSubmit)="onSubmit()">
-  <ngx-wig formControlName="downloadFileContent"></ngx-wig>
-  <br>
-  <button type="submit" [disabled]="!fileForm.valid">Submit</button>
+    <label>
+      <textarea id="results" rows="30" cols="150" formControlName="downloadFileContent"></textarea>
+  </label>
+    <br>
+    <button type="submit" [disabled]="!fileForm.valid">Submit</button>
+</form>
+<br>
+<form>
+    <div class="form-group">
+        <label for="fileContent"></label>
+        <textarea cols="150" rows="20" class="form-control" id="fileContent" [(ngModel)]="templateFileContents" name="name"></textarea>
+    </div>
 </form>
 
-
+<!-- <br> {{templateFileContents | json}} -->

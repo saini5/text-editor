@@ -13,8 +13,9 @@ export class AppComponent implements OnInit {
   constructor(private _demoService: DemoService) { }
 
   fileForm = new FormGroup({
-    downloadFileContent: new FormControl(`Change something here`)
+    downloadFileContent: new FormControl(`Change something \n here`)
   });
+  templateFileContents = 'here \n here';
 
   /**
    * Make call to /download endpoint and then, get file contents
@@ -22,8 +23,13 @@ export class AppComponent implements OnInit {
   getFileContents() {
     this._demoService.getFileContents().subscribe(fileContents => {
       console.log(fileContents);
-      this.fileForm.patchValue({
-        downloadFileContent: fileContents
+      let modifiedtext2 = fileContents.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+      console.log(modifiedtext2);
+      this.templateFileContents = modifiedtext2;
+      console.log('TEmplateFileContents');
+      console.log(this.templateFileContents);
+      this.fileForm.setValue({
+        downloadFileContent: modifiedtext2
       });
     });
     // below - with download + actual fetch

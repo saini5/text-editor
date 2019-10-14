@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-const auth_header = 'Bearer ' + '3NS85YuhYpQcnNwJ30q9KOcVhR8rf8';
+const auth_header = 'Bearer ' + 'eUlv2hhE6jQMIcJtSobaM9XMIq652r';
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type':  'application/json',
@@ -48,7 +48,7 @@ export class DemoService {
 
   getFileContents() {
     let restUrl = 'content/';
-    let pathFile = 'users/aman/test/complexities.txt';
+    let pathFile = 'users/aman/test/A.csv'; //complexities.txt
     let url = this.baseUrl + restUrl + '?path=' + pathFile;
     return this.http.get(url, httpOptions);
     // this.getDownloadUrl().subscribe(val => this.fileUrl = val);
