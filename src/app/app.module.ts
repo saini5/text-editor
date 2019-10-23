@@ -4,26 +4,28 @@ import { HttpClientModule } from '@angular/common/http';
 
 
 import { AppComponent } from './app.component';
-import { ParentComponent } from './parent/parent.component';
 import { DemoService } from './services/demo.service';
 
 import {NgxWigModule} from 'ngx-wig';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { CookieService } from 'ngx-cookie-service';
+import {Router, ActivatedRoute, Params, RouterModule} from '@angular/router';
+
 
 @NgModule({
   declarations: [
-    AppComponent,
-    ParentComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     NgxWigModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule.forRoot([]),
   ],
-  providers: [DemoService],
+  providers: [DemoService, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

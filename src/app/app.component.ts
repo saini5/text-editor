@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DemoService } from './services/demo.service';
 import { FormControl, FormGroup } from '@angular/forms';
+import { CookieService } from 'ngx-cookie-service';
+import { ActivatedRoute } from '@angular/router';
+import 'rxjs/add/operator/filter';
 
 @Component({
   selector: 'app-root',
@@ -8,81 +11,66 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'Edit file';
-
-  constructor(private _demoService: DemoService) { }
+  authTokenColumbus = 'UNKNOWN';
+  pathParameter: string;
+  fileName: string;
 
   fileForm = new FormGroup({
     downloadFileContent: new FormControl(`Change something \n here`)
   });
   templateFileContents = 'here \n here';
 
-  /**
-   * Make call to /download endpoint and then, get file contents
-   */
-  getFileContents() {
-    this._demoService.getFileContents().subscribe(fileContents => {
-      console.log(fileContents);
-      let modifiedtext2 = fileContents.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
-      console.log(modifiedtext2);
-      this.templateFileContents = modifiedtext2;
-      console.log('TEmplateFileContents');
-      console.log(this.templateFileContents);
-      this.fileForm.setValue({
-        downloadFileContent: modifiedtext2
-      });
-    });
-    // below - with download + actual fetch
-    // this._demoService.getDownloadUrl().subscribe((url: String) => {
-    //   console.log(url);
-    //   let truncatedFront = url.split(':"')[1];
-    //   let truncatedUrl = truncatedFront.split('"}')[0];
-    //   console.log('Truncated URL: ' + truncatedUrl);
-    //   this.fileForm.patchValue({
-    //     downloadFileContent: 'testing 123'
-    //   }); // TODO:: remove after the get content call works.
-    //   this._demoService.getContent(truncatedUrl).subscribe(
-    //     fileContents => {
-    //       console.log('within the nested subscribe');
-    //       console.log(fileContents);
-    //       this.fileForm.patchValue({
-    //         downloadFileContent: fileContents
-    //       });
-    //       this.fileForm.patchValue({
-    //         downloadFileContent: 'hi there i am test content'
-    //       }); // TODO:: remove this later
-    //     }
-    //   );
-    // });
-  }
+  constructor(private _demoService: DemoService, private cookieService: CookieService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    // TODO:: extract path of file from url
-    console.log('In init');
-    // Get contents of file and display on screen
-    this.getFileContents();
+    /** get token */
+    this.authTokenColumbus = this.cookieService.get('columbus_token');
+    /** get path parameter to get file location and fetch contents */
+    this.route.queryParams
+      .filter(params => params.path)
+      .subscribe(params => {
+        console.log(params);
+        this.pathParameter = params.path;
+        this.fileName = this.pathParameter.substr(this.pathParameter.lastIndexOf('/') + 1);
+        /** get file contents */
+        this.getFileContents(this.pathParameter);
+      });
   }
 
   /**
-   * On Press of Submit button, call /update endpoint to update the respective file.
+   * Fetch file contents given the path to it.
+   */
+  getFileContents(pathValue) {
+    this._demoService.getFileContents(this.authTokenColumbus, pathValue).subscribe(fileContents => {
+      /** recognize \n \r as new line characters */
+      let contentsWithNewLines = fileContents.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+      this.fileForm.setValue({
+        downloadFileContent: contentsWithNewLines
+      });
+    });
+  }
+
+  /**
+   * On Press of Submit button, update the file contents on cdrive
    */
   onSubmit() {
-    // TODO: Use EventEmitter with form value
-    console.log(this.fileForm.value);
-    this.updateFileContents();
+    this.updateFileContents(this.pathParameter, this.fileForm.get('downloadFileContent').value);
   }
 
-  updateFileContents() {
-    this.deleteFile();
-    this.addFile();
+  updateFileContents(pathValue, contents) {
+    this.deleteFile(pathValue);
+    this.addFile(pathValue, contents);
   }
 
-  deleteFile() {
-    this._demoService.deleteFile().subscribe();
+  /** delete existing file */
+  deleteFile(pathValue) {
+    this._demoService.deleteFile(this.authTokenColumbus, pathValue).subscribe();
   }
 
-  addFile() {
-    this._demoService.createFile().subscribe();
+  /** create a new file */
+  addFile(pathValue, contents) {
+    this._demoService.createFile(this.authTokenColumbus, pathValue, contents).subscribe((val) => {
+      console.log(val);
+    });
   }
-
 }

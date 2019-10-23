@@ -2,20 +2,14 @@
 <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.1.19/css/materialdesignicons.min.css">
 
 <!--h4>{{fileForm.value}}</h4-->
-<h3> Edit contents </h3>
+<br>
+<h3> Edit contents of {{fileName}}</h3>
 <form [formGroup]="fileForm" (ngSubmit)="onSubmit()">
     <label>
-      <textarea id="results" rows="30" cols="150" formControlName="downloadFileContent"></textarea>
-  </label>
+        <textarea id="results" rows="50" cols="220" formControlName="downloadFileContent"></textarea>
+    </label>
+    <br>
     <br>
     <button type="submit" [disabled]="!fileForm.valid">Submit</button>
 </form>
 <br>
-<form>
-    <div class="form-group">
-        <label for="fileContent"></label>
-        <textarea cols="150" rows="20" class="form-control" id="fileContent" [(ngModel)]="templateFileContents" name="name"></textarea>
-    </div>
-</form>
-
-<!-- <br> {{templateFileContents | json}} -->
