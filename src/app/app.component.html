@@ -1,7 +1,6 @@
 <!-- link stylesheet for icons of the ngx-wig text editor -->
 <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.1.19/css/materialdesignicons.min.css">
 
-<!--h4>{{fileForm.value}}</h4-->
 <br>
 <h3> Edit contents of {{fileName}}</h3>
 <form [formGroup]="fileForm" (ngSubmit)="onSubmit()">
@@ -12,4 +11,4 @@
     <br>
     <button type="submit" [disabled]="!fileForm.valid">Submit</button>
 </form>
-<br>
+<!-- <br> Current URL is: <code>{{location.path()}}</code><br> -->
